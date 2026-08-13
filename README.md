@@ -2,6 +2,8 @@
 
 根据之之的照片制作的 Codex v2 动画宠物：棕色虎斑德文卷毛猫，超大耳朵、黄绿色圆眼、白色鼻梁与胸腹，性格调皮、友好又黏人。
 
+Codex v2 animated pet based on Zhizhi, a playful and affectionate Devon Rex tabby cat.
+
 ## 文件
 
 - `pet.json`：宠物元数据
