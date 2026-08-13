@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import { parse } from "yaml";
 
 const EXPECTED_SPRITESHEET =
-  "d4e8c194dc683d88157837b351752d08ef4479a9f9d4437933cb6568e22bde23";
+  "29970fdb08cc4c2b7944c0540746573e349fed7ed6b45c10ad23a709ab3f85dc";
 
 async function loadJson(path) {
   return JSON.parse(await readFile(path, "utf8"));

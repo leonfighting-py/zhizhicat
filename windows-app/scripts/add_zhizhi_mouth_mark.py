@@ -22,10 +22,11 @@ MARK_COLOR = (205, 153, 83)
 
 # The detector needs a little help for the crouched front frames where the
 # largest white component is a paw, and for a loaf frame where an ear is the
-# largest near-white component. Coordinates are cell-local.
+# largest near-white component. Coordinates are cell-local. The mark is on
+# the viewer-right side of the nose, matching Zhizhi's actual facial marking.
 OVERRIDES: dict[tuple[int, int], tuple[int, int] | None] = {
-    (6, 4): (74, 101),
-    (7, 2): (73, 111),
+    (6, 4): (89, 101),
+    (7, 2): (88, 111),
 }
 
 
@@ -76,7 +77,10 @@ def mark_center(cell: Image.Image, row: int, column: int) -> tuple[int, int] | N
         return None
     _, x0, x1, y0, y1 = max(candidates)
     width = x1 - x0 + 1
-    fraction = 0.34 if width >= 55 else 0.40
+    # On front-facing faces the white muzzle runs left-to-right; the mark is
+    # deliberately placed to the viewer-right of the nose. Profile frames
+    # naturally use the visible side of their white muzzle component.
+    fraction = 0.66 if width >= 55 else 0.60
     return round(x0 + (x1 - x0) * fraction), round(y0 + (y1 - y0) * 0.55)
 
 

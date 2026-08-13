@@ -5,12 +5,12 @@ use std::{fs, path::PathBuf};
 
 use geometry::{clamp_x, clamp_y, move_horizontal, MoveResult, Rect, WindowGeometry};
 use settings::{Direction, PetSettings};
+use tauri::window::Color;
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     AppHandle, Emitter, Manager, PhysicalPosition, Position, Size, WebviewWindow,
 };
-use tauri::window::Color;
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 

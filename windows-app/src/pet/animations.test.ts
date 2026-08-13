@@ -29,10 +29,22 @@ describe("Zhizhi sprite atlas contract", () => {
   });
 
   it("keeps every used animation deliberately slow and readable", () => {
-    for (const animation of Object.values(ANIMATIONS)) {
+    for (const animation of Object.values(ANIMATIONS).filter(
+      (candidate) => candidate !== ANIMATIONS.idle,
+    )) {
       expect(animation.frameMs).toBeGreaterThanOrEqual(140);
       expect(animation.frameMs).toBeLessThanOrEqual(280);
     }
+    expect(ANIMATIONS.idle.frameMs).toBe(12_000);
+    expect(ANIMATIONS.idle.frameDurations).toEqual([
+      12_000,
+      180,
+      12_000,
+      180,
+      12_000,
+      180,
+    ]);
+    expect(animationDuration(ANIMATIONS.idle)).toBe(36_540);
   });
 
   it("loops walking but clamps one-shot reactions on their last frame", () => {
@@ -41,5 +53,15 @@ describe("Zhizhi sprite atlas contract", () => {
 
     expect(frameIndexAt(walking, animationDuration(walking))).toBe(0);
     expect(frameIndexAt(waving, animationDuration(waving) + 1_000)).toBe(3);
+  });
+
+  it("keeps idle blink closures brief while spacing them naturally", () => {
+    const idle = ANIMATIONS.idle;
+
+    expect(frameIndexAt(idle, 11_999)).toBe(0);
+    expect(frameIndexAt(idle, 12_000)).toBe(1);
+    expect(frameIndexAt(idle, 12_179)).toBe(1);
+    expect(frameIndexAt(idle, 12_180)).toBe(2);
+    expect(frameIndexAt(idle, animationDuration(idle))).toBe(0);
   });
 });
