@@ -22,6 +22,7 @@ rsync -a \
   --exclude '*.tsbuildinfo' \
   --exclude 'src-tauri/gen/' \
   --exclude 'src-tauri/target/' \
+  --exclude '__pycache__/' \
   --exclude 'outputs/windows/*.exe' \
   --exclude 'outputs/windows/SHA256SUMS.txt' \
   "${project_root}/" "${target_repo}/windows-app/"

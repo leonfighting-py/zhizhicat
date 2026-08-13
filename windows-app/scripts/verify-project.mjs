@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import { parse } from "yaml";
 
 const EXPECTED_SPRITESHEET =
-  "4d2f75a9cc142f1d4b2bd6edb119dc1dee55273236eda3c2147d3547995c8db2";
+  "d4e8c194dc683d88157837b351752d08ef4479a9f9d4437933cb6568e22bde23";
 
 async function loadJson(path) {
   return JSON.parse(await readFile(path, "utf8"));
@@ -20,11 +20,16 @@ const rootWorkflow = await loadYaml(".github/workflows/windows-build.yml");
 const nestedWorkflow = await loadYaml("integration/zhizhicat-windows-build.yml");
 const atlas = await readFile("public/pets/zhizhi/spritesheet.webp");
 const atlasHash = createHash("sha256").update(atlas).digest("hex");
+const rustSource = await readFile("src-tauri/src/lib.rs", "utf8");
+const styles = await readFile("src/styles.css", "utf8");
 
 const assertions = [
   [config.productName === "之之桌面宠物", "product name"],
   [config.mainBinaryName === "ZhizhiPet", "main binary name"],
   [config.app.windows[0].transparent === true, "transparent window"],
+  [rustSource.includes("set_background_color(Some(Color(0, 0, 0, 0)))"), "runtime transparent background reset"],
+  [styles.includes("background-color: transparent"), "sprite transparent background"],
+  [!styles.includes("drop-shadow("), "no sprite box shadow"],
   [config.app.windows[0].decorations === false, "borderless window"],
   [config.app.windows[0].alwaysOnTop === true, "always-on-top window"],
   [config.app.windows[0].skipTaskbar === true, "taskbar-hidden window"],

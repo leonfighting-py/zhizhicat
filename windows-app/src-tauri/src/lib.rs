@@ -10,6 +10,7 @@ use tauri::{
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     AppHandle, Emitter, Manager, PhysicalPosition, Position, Size, WebviewWindow,
 };
+use tauri::window::Color;
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
@@ -378,6 +379,12 @@ fn prepare_window(app: &AppHandle) -> Result<(), String> {
     let window = app
         .get_webview_window(WINDOW_LABEL)
         .ok_or_else(|| "找不到之之的主窗口".to_string())?;
+    // WebView2 can keep an opaque surface even when the Tauri window is marked
+    // transparent. Clearing both layers at startup makes only the alpha-shaped
+    // sprite visible on Windows.
+    window
+        .set_background_color(Some(Color(0, 0, 0, 0)))
+        .map_err(|error| format!("无法清除之之的窗口背景：{error}"))?;
     window
         .set_ignore_cursor_events(false)
         .map_err(|error| format!("无法启用鼠标互动：{error}"))?;

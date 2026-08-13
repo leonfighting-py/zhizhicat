@@ -39,9 +39,9 @@ button {
 
 .pet-sprite {
   flex: none;
+  background-color: transparent;
   cursor: grab;
   touch-action: none;
-  filter: drop-shadow(0 5px 3px rgb(61 37 24 / 18%));
   image-rendering: auto;
 }
 

@@ -53,7 +53,7 @@ jobs:
       - name: Verify artwork hash
         shell: pwsh
         run: |
-          $expected = "4d2f75a9cc142f1d4b2bd6edb119dc1dee55273236eda3c2147d3547995c8db2"
+          $expected = "d4e8c194dc683d88157837b351752d08ef4479a9f9d4437933cb6568e22bde23"
           $actual = (Get-FileHash public/pets/zhizhi/spritesheet.webp -Algorithm SHA256).Hash.ToLowerInvariant()
           if ($actual -ne $expected) { throw "Zhizhi spritesheet hash mismatch: $actual" }
 
