@@ -1,0 +1,10 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "之之主窗口只使用渲染和原生拖拽所需的最小权限",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:event:allow-listen"
+  ]
+}

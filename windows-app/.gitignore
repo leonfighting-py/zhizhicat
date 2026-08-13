@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+src-tauri/target/
+src-tauri/gen/
+outputs/windows/*.exe
+outputs/windows/SHA256SUMS.txt
+*.log
+.DS_Store

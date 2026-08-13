@@ -1,0 +1,103 @@
+name: Build Zhizhi for Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ["v*"]
+    paths:
+      - "windows-app/**"
+      - ".github/workflows/windows-build.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  windows-x64:
+    name: Test and build Windows x64
+    runs-on: windows-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: windows-app
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: windows-app/pnpm-lock.yaml
+
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Cache Rust build
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: windows-app/src-tauri -> target
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify artwork hash
+        shell: pwsh
+        run: |
+          $expected = "4d2f75a9cc142f1d4b2bd6edb119dc1dee55273236eda3c2147d3547995c8db2"
+          $actual = (Get-FileHash public/pets/zhizhi/spritesheet.webp -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne $expected) { throw "Zhizhi spritesheet hash mismatch: $actual" }
+
+      - name: Test and build frontend
+        run: |
+          pnpm test
+          pnpm typecheck
+          pnpm build
+
+      - name: Test and check Rust
+        run: |
+          cargo fmt --manifest-path src-tauri/Cargo.toml --check
+          cargo test --manifest-path src-tauri/Cargo.toml --locked
+          cargo check --manifest-path src-tauri/Cargo.toml --locked
+
+      - name: Build NSIS installer and release binary
+        run: pnpm tauri build --bundles nsis
+
+      - name: Collect installer, portable binary, and hashes
+        shell: pwsh
+        run: |
+          $version = (Get-Content src-tauri/tauri.conf.json | ConvertFrom-Json).version
+          $output = "outputs/windows"
+          New-Item -ItemType Directory -Force -Path $output | Out-Null
+
+          $installer = Get-ChildItem "src-tauri/target/release/bundle/nsis/*-setup.exe" | Select-Object -First 1
+          if (-not $installer) { throw "NSIS installer was not produced" }
+          Copy-Item $installer.FullName "$output/ZhizhiPet-Setup-$version.exe"
+
+          $binary = "src-tauri/target/release/ZhizhiPet.exe"
+          if (-not (Test-Path $binary)) { throw "Release binary was not produced: $binary" }
+          Copy-Item $binary "$output/ZhizhiPet-Portable-$version.exe"
+
+          Copy-Item README.md "$output/README.md"
+          Get-ChildItem "$output/*.exe" | Get-FileHash -Algorithm SHA256 |
+            ForEach-Object { "$($_.Hash.ToLowerInvariant())  $([IO.Path]::GetFileName($_.Path))" } |
+            Set-Content "$output/SHA256SUMS.txt" -Encoding utf8
+
+          ./scripts/verify-artifacts.ps1 -ArtifactDirectory $output -Version $version
+
+      - name: Upload Windows deliverables
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhizhi-windows-x64
+          path: windows-app/outputs/windows/
+          if-no-files-found: error
+          retention-days: 30

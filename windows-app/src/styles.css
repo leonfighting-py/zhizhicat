@@ -1,0 +1,80 @@
+:root {
+  color: #2b211c;
+  font-family:
+    "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  background: transparent;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+body {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button {
+  font: inherit;
+}
+
+.pet-stage {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  background: transparent;
+}
+
+.pet-sprite {
+  flex: none;
+  cursor: grab;
+  touch-action: none;
+  filter: drop-shadow(0 5px 3px rgb(61 37 24 / 18%));
+  image-rendering: auto;
+}
+
+.pet-sprite:active {
+  cursor: grabbing;
+}
+
+.fatal-error {
+  display: flex;
+  width: calc(100% - 32px);
+  min-height: 120px;
+  box-sizing: border-box;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px;
+  padding: 16px;
+  border: 1px solid #e7c1ad;
+  border-radius: 14px;
+  background: #fff9f4;
+  box-shadow: 0 12px 35px rgb(64 40 29 / 25%);
+  font-size: 13px;
+}
+
+.fatal-error span {
+  color: #74594c;
+  overflow-wrap: anywhere;
+}
+
+.fatal-error button {
+  align-self: flex-end;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 8px;
+  color: white;
+  background: #8e573d;
+}
